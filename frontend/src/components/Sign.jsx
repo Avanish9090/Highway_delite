@@ -30,7 +30,7 @@ function Sign() {
       email: signUp.email,
     };
     try {
-      axios.post("https://highway-delite-backend-wv4v.onrender.com/signup", signUp);
+      axios.post("https://highway-delite-backend-3lym.onrender.com/signup", signUp);
       toast.success("Signup successfully");
       console.log(updatedUser);
       localStorage.setItem("token", "dummy-token");
@@ -46,7 +46,7 @@ function Sign() {
       return;
     }
     try {
-      const emRes = await axios.post("https://highway-delite-backend-wv4v.onrender.com/check-mail", {
+      const emRes = await axios.post("https://highway-delite-backend-3lym.onrender.com/check-mail", {
         email: signUp.email,
       });
       if (emRes.data.status === 301) {
@@ -58,7 +58,7 @@ function Sign() {
     }
 
     try {
-      const response = axios.post("https://highway-delite-backend-wv4v.onrender.com/secure-login", {
+      const response = axios.post("https://highway-delite-backend-3lym.onrender.com/secure-login", {
         email: signUp.email,
       });
       if (response.status === 500) {
@@ -84,7 +84,7 @@ function Sign() {
         return;
       }
 
-      await axios.post("https://highway-delite-backend-wv4v.onrender.com/secure-login", signUp);
+      await axios.post("https://highway-delite-backend-3lym.onrender.com/secure-login", signUp);
       saveData();
     } catch (err) {
       if (err.response && err.response.status === 401) {
