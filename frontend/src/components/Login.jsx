@@ -33,7 +33,7 @@ function Login() {
         toast.error("all feilds are required");
         return;
       }
-      await axios.post("http://localhost:5000/secure-login", logData);
+      await axios.post("https://highway-delite-backend-wv4v.onrender.com/secure-login", logData);
       toast.success("login Successfull");
       localStorage.setItem("token", "dummy-token");
       Navigate("/dashboard", { state: { user: user } });
@@ -52,7 +52,7 @@ function Login() {
       return;
     }
     try {
-      const emRes = await axios.post("http://localhost:5000/check-mail", {
+      const emRes = await axios.post("https://highway-delite-backend-wv4v.onrender.com/check-mail", {
         email: logData.email,
       });
       if (emRes.data.status === 300) {
@@ -66,7 +66,7 @@ function Login() {
     }
 
     try {
-      const response = axios.post("http://localhost:5000/secure-login", {
+      const response = axios.post("https://highway-delite-backend-wv4v.onrender.com/secure-login", {
         email: logData.email,
       });
       if (response.status === 500) {
