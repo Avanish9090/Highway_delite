@@ -66,7 +66,7 @@ function Login() {
     }
 
     try {
-      const response = axios.post("https://highway-delite-backend-wv4v.onrender.com/secure-login", {
+      const response =await axios.post("https://highway-delite-backend-wv4v.onrender.com/secure-login", {
         email: logData.email,
       });
       if (response.status === 500) {
