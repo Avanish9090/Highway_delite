@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png";
+import { Link } from "react-router-dom";
 
 function Login() {
   const Navigate = useNavigate();
@@ -33,7 +34,7 @@ function Login() {
         toast.error("all feilds are required");
         return;
       }
-      await axios.post("https://highway-delite-backend-wv4v.onrender.com/secure-login", logData);
+      await axios.post("https://highway-delite-backend-3lym.onrender.com/secure-login", logData);
       toast.success("login Successfull");
       localStorage.setItem("token", "dummy-token");
       Navigate("/dashboard", { state: { user: user } });
@@ -52,7 +53,7 @@ function Login() {
       return;
     }
     try {
-      const emRes = await axios.post("https://highway-delite-backend-wv4v.onrender.com/check-mail", {
+      const emRes = axios.post("https://highway-delite-backend-3lym.onrender.com/check-mail", {
         email: logData.email,
       });
       if (emRes.data.status === 300) {
@@ -66,7 +67,7 @@ function Login() {
     }
 
     try {
-      const response =await axios.post("https://highway-delite-backend-wv4v.onrender.com/secure-login", {
+      const response =await axios.post("https://highway-delite-backend-3lym.onrender.com/secure-login", {
         email: logData.email,
       });
       if (response.status === 500) {
@@ -157,9 +158,9 @@ function Login() {
 
               <p className="text-center">
                 Need an account ??{" "}
-                <a className="text-blue-500  underline" href="/">
-                  create one
-                </a>
+                <Link to="/" className="text-blue-500 underline">
+  Sign UP
+</Link>
               </p>
             </div>
           </div>
