@@ -4,6 +4,7 @@ import Baner from "../assets/images/baner.png";
 import axios from "axios";
 import logo from "../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Sign() {
   const Navigate = useNavigate();
@@ -180,9 +181,9 @@ function Sign() {
               )}
               <p className="text-center">
                 Already have an account ??{" "}
-                <a className="text-blue-500  underline" href="/login">
+                <Link to="/login" className="text-blue-500 underline">
                   Sign in
-                </a>
+                </Link>
               </p>
             </div>
           </div>
