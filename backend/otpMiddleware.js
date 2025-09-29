@@ -22,7 +22,7 @@ const sendOtpMiddleware = async (req, res, next) => {
       secure: false,
       auth: {
         user: 'apikey', // This is not your SendGrid email
-        pass: process.env.SENDGRID_API_KEY,
+        pass: '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',
       },
     });
 
