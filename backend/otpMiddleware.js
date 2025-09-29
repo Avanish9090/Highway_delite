@@ -1,13 +1,10 @@
-// otpMiddleware.js
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-const otpStore = new Map(); // In-memory store (email => OTP), use Redis/DB in production
+const otpStore = new Map();
 
-// Generate 6-digit OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
 
-// Send OTP middleware
 const sendOtpMiddleware = async (req, res, next) => {
   const { email, otp } = req.body;
 
@@ -15,25 +12,22 @@ const sendOtpMiddleware = async (req, res, next) => {
     return res.status(400).json({ message: 'Email is required' });
   }
 
-  // If OTP is not provided, generate & send
   if (!otp) {
     const generatedOtp = generateOTP();
     otpStore.set(email, generatedOtp);
 
-    // Setup Nodemailer
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true, 
+      host: 'smtp.sendgrid.net',
+      port: 587,
+      secure: false,
       auth: {
-           user: process.env.EMAIL_USER,
-           pass: process.env.EMAIL_PASS,
-          },
+        user: 'apikey', // This is not your SendGrid email
+        pass: process.env.SENDGRID_API_KEY,
+      },
     });
 
-    // Email content
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.FROM_EMAIL, // Must be a verified sender
       to: email,
       subject: 'Highway delite authentication',
       text: `Your OTP is: ${generatedOtp}`,
@@ -43,15 +37,14 @@ const sendOtpMiddleware = async (req, res, next) => {
       await transporter.sendMail(mailOptions);
       return res.status(200).json({ message: 'OTP sent to your email' });
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Failed to send OTP' });
+      console.error('Error sending email:', error);
+      return res.status(500).json({ message: 'Failed to send OTP', error: error.message });
     }
   }
 
-  // If OTP is provided, verify it
   const validOtp = otpStore.get(email);
   if (otp == validOtp) {
-    otpStore.delete(email); // One-time use
+    otpStore.delete(email);
     return next();
   } else {
     return res.status(401).json({ message: 'Invalid or expired OTP' });
