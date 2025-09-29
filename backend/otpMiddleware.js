@@ -1,10 +1,13 @@
+// otpMiddleware.js
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-const otpStore = new Map();
+const otpStore = new Map(); // In-memory store (email => OTP), use Redis/DB in production
 
+// Generate 6-digit OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
 
+// Send OTP middleware
 const sendOtpMiddleware = async (req, res, next) => {
   const { email, otp } = req.body;
 
@@ -12,22 +15,23 @@ const sendOtpMiddleware = async (req, res, next) => {
     return res.status(400).json({ message: 'Email is required' });
   }
 
+  // If OTP is not provided, generate & send
   if (!otp) {
     const generatedOtp = generateOTP();
     otpStore.set(email, generatedOtp);
 
+    // Setup Nodemailer
     const transporter = nodemailer.createTransport({
-      host: 'smtp.sendgrid.net',
-      port: 587,
-      secure: false,
+      service: 'gmail',
       auth: {
-        user: 'apikey', // This is not your SendGrid email
-        pass: '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',
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
+    // Email content
     const mailOptions = {
-      from: process.env.FROM_EMAIL, // Must be a verified sender
+      from: process.env.EMAIL_USER,
       to: email,
       subject: 'Highway delite authentication',
       text: `Your OTP is: ${generatedOtp}`,
@@ -37,14 +41,15 @@ const sendOtpMiddleware = async (req, res, next) => {
       await transporter.sendMail(mailOptions);
       return res.status(200).json({ message: 'OTP sent to your email' });
     } catch (error) {
-      console.error('Error sending email:', error);
-      return res.status(500).json({ message: 'Failed to send OTP', error: error.message });
+      console.error(error);
+      return res.status(500).json({ message: 'Failed to send OTP' });
     }
   }
 
+  // If OTP is provided, verify it
   const validOtp = otpStore.get(email);
   if (otp == validOtp) {
-    otpStore.delete(email);
+    otpStore.delete(email); // One-time use
     return next();
   } else {
     return res.status(401).json({ message: 'Invalid or expired OTP' });
@@ -52,3 +57,4 @@ const sendOtpMiddleware = async (req, res, next) => {
 };
 
 module.exports = sendOtpMiddleware;
+
